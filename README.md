@@ -9,4 +9,4 @@
 <p>This package has been published on Nuget package manager. Just run this command: <br/> Install-Package Jeeb.Client -Version 1.0.0</p>
 
 
-<p><strong>NOTE:</strong>You have to imeplement the logic of webhook and callback in a Controller class. webhook model is already included in the package.</p>
+<p><strong>NOTE: </strong>You have to implement the logic of webhook and callback in a Controller class. webhook model is already included in the package.</p>
