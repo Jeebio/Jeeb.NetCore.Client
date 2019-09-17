@@ -8,7 +8,7 @@ namespace Jeeb.Client.Test
 {
     public class JeebClientTests
     {
-        private const string Signature = "PWJWH6IDVKL7HNBF5JMQL2SOAI2XBNPQASKWB2CVSL6C4OXAUXVQ";
+        private const string Signature = "YOUR_SIGNATURE_GOES_HERE";
 
         private readonly IJeebClient _jeebClient;
 
@@ -25,16 +25,19 @@ namespace Jeeb.Client.Test
                 OrderNo = RandomUtils.RandomStringGenerator(),
                 Value = 0.001M,
                 Coins = "tbtc/tltc",
+                AllowReject = true,
                 AllowTestNet = true,
                 Language = "auto",
-                CallbackUrl = "https://webhook.site/56eba40c-9a52-4161-834a-9cceb58cd910",
-                WebhookUrl = "https://webhook.site/56eba40c-9a52-4161-834a-9cceb58cd910",
+                CallbackUrl = "https://webhook.site/205a985d-f43e-4b45-8588-dd5047b34bd5",
+                WebhookUrl = "https://webhook.site/205a985d-f43e-4b45-8588-dd5047b34bd5",
                 Expiration = 30
             };
 
             var issueResponse = _jeebClient.Issue(issueRequest);
             Assert.NotNull(issueResponse);
             Assert.NotNull(issueResponse.Addresses);
+            Assert.NotNull(issueResponse.Token);
+            Assert.NotNull(issueResponse.ReferenceNo);
         }
 
         [Fact]
@@ -42,7 +45,7 @@ namespace Jeeb.Client.Test
         {
             var statusRequest = new StatusRequest
             {
-                Token = "LNQE25SCAZD2NMCALMFDQH7434NGVEITVKSZ2UU2BVWA6PCVSWORPTTWWXWZ2UIIL24OZ5MVVQN7TMA2BWVOLBQ7O6XODZJF3KC6I6QPED4D2VK7CYDFALARGKCAY5Y5Q"
+                Token = "PAYMENT_TOKEN"
             };
 
             var issueResponse = _jeebClient.Status(statusRequest);
@@ -54,7 +57,7 @@ namespace Jeeb.Client.Test
         {
             var confirmRequest = new ConfirmRequest()
             {
-                Token = "LNQE25SCAZD2NMCALMFDQH7434NGVEITVKSZ2UU2BVWA6PCVSWORPTTWWXWZ2UIIL24OZ5MVVQN7TMA2BWVOLBQ7O6XODZJF3KC6I6QPED4D2VK7CYDFALARGKCAY5Y5Q"
+                Token = "PAYMENT_TOKEN"
             };
 
             var issueResponse = _jeebClient.Confirm(confirmRequest);

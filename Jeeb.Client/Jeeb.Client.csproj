@@ -2,11 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Jeeb Payment Gateway dotnet client.</Description>
+    <Copyright>Jeeb.io</Copyright>
+    <PackageLicenseUrl />
+    <PackageIconUrl>https://jeeb.io/cdn/en/blue-white-jeeb.png</PackageIconUrl>
+    <PackageProjectUrl>https://jeeb.io</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Jeebio/Jeeb.NetCore.Client</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Jeeb.io</Authors>
+    <Product>Jeeb.Client</Product>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="RestSharp" Version="106.6.9" />
+    <PackageReference Include="RestSharp" Version="106.6.10" />
   </ItemGroup>
 
 </Project>
