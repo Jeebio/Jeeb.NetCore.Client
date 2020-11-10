@@ -1,103 +1,70 @@
 ﻿using System;
-using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
+using Jeeb.Client.Dtos;
 using Jeeb.Client.Exceptions;
-using Jeeb.Client.Models;
 using RestSharp;
 
 namespace Jeeb.Client.Common
 {
     public abstract class BaseClient
     {
-        private readonly RestClient _restClient;
+        private readonly RestClient _client;
         private readonly Uri _baseUri;
-
 
         protected BaseClient(string baseUrl)
         {
             _baseUri = new Uri(baseUrl, UriKind.Absolute);
-            _restClient = new RestClient(_baseUri)
+            _client = new RestClient(_baseUri)
             {
                 Encoding = Encoding.UTF8
             };
         }
 
-
-        protected T WrappedExecute<T>(IRestRequest request, Method method) where T : class, new()
+        protected BaseClient(string baseUrl, string apiKey)
+            : this(baseUrl)
         {
-            var result = _restClient.Execute<Response<T>>(request, method);
-            if (result.IsSuccessful && result.Data?.HasError != true)
-            {
-                return result.Data?.Result;
-            }
-
-            throw new JeebRequestFailedException(result.Data?.ErrorMessage ?? result.ErrorMessage,
-                result.Data?.ErrorCode,
-                (int)result.StatusCode);
+            _client.Authenticator = new BaseClientAuthenticator(apiKey);
         }
 
-        protected async Task<T> WrappedExecuteAsync<T>(IRestRequest request) where T : class, new()
-        {
-            var result = await _restClient.ExecuteTaskAsync<Response<T>>(request);
-            if (result.IsSuccessful && result.Data?.HasError != true)
-            {
-                return result.Data?.Result;
-            }
-
-            throw new JeebRequestFailedException(result.Data?.ErrorMessage ?? result.ErrorMessage,
-                result.Data?.ErrorCode,
-                (int)result.StatusCode);
-        }
-
-
-        protected T Execute<T>(IRestRequest request, Method method) where T : class, new()
-        {
-            var result = _restClient.Execute<T>(request, method);
-            if (result.IsSuccessful)
-            {
-                return result.Data;
-            }
-
-            throw new JeebRequestFailedException(result.ErrorMessage,
-                null,
-                (int)result.StatusCode);
-        }
-
-        protected async Task<T> ExecuteAsync<T>(IRestRequest request) where T : class, new()
-        {
-            var result = await _restClient.ExecuteTaskAsync<T>(request);
-            if (result.IsSuccessful)
-            {
-                return result.Data;
-            }
-
-            throw new JeebRequestFailedException(result.ErrorMessage,
-                null,
-                (int)result.StatusCode);
-        }
-
-
-        protected RestRequest GetRequest<T>(string url, T data, Method method)
+        protected RestRequest BuildRequest<T>(string url, T data, Method method)
         {
             var request = new RestRequest(new Uri(_baseUri, url), method, DataFormat.Json)
             {
-                JsonSerializer = new CustomJsonSerializer()
+                JsonSerializer = new JsonSerializer()
             };
-            request.AddQueryParameter("culture", CultureInfo.CurrentUICulture.Name);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             return request;
         }
 
-        protected RestRequest GetRequest(string url, Method method)
+        protected RestRequest BuildRequest(string url, Method method)
         {
             var request = new RestRequest(new Uri(_baseUri, url), method, DataFormat.Json)
             {
-                JsonSerializer = new CustomJsonSerializer()
+                JsonSerializer = new JsonSerializer()
             };
-
-            request.AddQueryParameter("culture", CultureInfo.CurrentUICulture.Name);
             return request;
+        }
+
+        protected async Task<T> ExecuteRequestAsync<T>(IRestRequest request) where T : Response, new()
+        {
+            var response = await _client.ExecuteAsync<T>(request);
+            return HandleResponse(response);
+        }
+
+        private T HandleResponse<T>(IRestResponse<T> response) where T : Response, new()
+        {
+            if (response.IsSuccessful && response.Data?.Succeed == true)
+            {
+                return response.Data;
+            }
+
+            if (response.Data != null)
+            {
+                throw new RequestFailedException(response.Data);
+            }
+
+            throw new RequestFailedException(response.Content ?? response.ErrorMessage);
         }
     }
 }

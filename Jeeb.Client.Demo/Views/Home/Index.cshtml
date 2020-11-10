@@ -1,0 +1,58 @@
+@using Jeeb.Client.Common
+@model IssueViewModel
+@{
+    ViewData["Title"] = "Demo";
+}
+
+<div class="text-center">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="h-5">
+                Jeeb Payment Gateway
+            </h1>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+            {
+                <div class="row">
+                    <div class="col-6 form-group">
+                        <label asp-for="Type">Type</label>
+                        <select asp-for="Type" asp-items="Html.GetEnumSelectList<Constants.PaymentType>()" class="form-control"></select>
+                    </div>
+                    <div class="col-6 form-group">
+                        <label asp-for="Type">Mode</label>
+                        <select asp-for="Type" asp-items="Html.GetEnumSelectList<Constants.PaymentMode>()" class="form-control"></select>
+                    </div>
+                    <div class="col-12 form-group">
+                        <label asp-for="PayableCoins">Payable Coins</label>
+                        <input asp-for="PayableCoins" class="form-control">
+                    </div>
+                    <div class="col-6 form-group">
+                        <label asp-for="BaseCurrencyId">Base Currency</label>
+                        <select asp-for="BaseCurrencyId" asp-items="@ViewBag.BaseCurrencies" class="form-control"></select>
+                    </div>
+                    <div class="col-6 form-group">
+                        <label asp-for="BaseAmount">Base Amount</label>
+                        <input asp-for="BaseAmount" class="form-control">
+                    </div>
+                    <div class="col-4 form-group mb-3">
+                        <label asp-for="Language">Language</label>
+                        <select asp-for="Language" asp-items="@ViewBag.Languages" class="form-control"></select>
+                    </div>
+                    <label class="col-4 form-check-label">
+                        <input class="form-check-input" asp-for="AllowReject"/>
+                        @Html.DisplayNameFor(model => model.AllowReject)
+                    </label>
+                    <label class="col-4 form-check-label">
+                        <input class="form-check-input" asp-for="AllowTestNets"/>
+                        @Html.DisplayNameFor(model => model.AllowTestNets)
+                    </label>
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-block btn-primary">Create Payment</button>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

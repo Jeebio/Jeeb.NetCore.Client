@@ -1,0 +1,58 @@
+@using Jeeb.Client.Common
+@model Jeeb.Client.Dtos.CallbackDto
+@{
+    ViewData["Title"] = "Callback";
+}
+
+<div class="text-center">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="h-5">
+                Jeeb Payment Gateway
+            </h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @if (Model.State == Constants.PaymentState.PendingConfirmation)
+                {
+                    if (!Model.Refund)
+                    {
+                        <div class="col-12 alert alert-success">
+                            <p>Payment was successful!</p>
+                            <p>OrderNo: @Model.OrderNo</p>
+                            <p>ReferenceNo: @Model.ReferenceNo</p>
+                            @if (Model.BaseAmount.HasValue)
+                            {
+                                <p>BaseAmount: @Model.BaseAmount @Model.BaseCurrencyId</p>
+                            }
+                            <p>PaidAmount: @Model.PaidAmount @Model.PaidCurrencyId</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-12 alert alert-warning">
+                            <p>Payment has occurred but it's been rejected!</p>
+                            <p>OrderNo: @Model.OrderNo</p>
+                            <p>ReferenceNo: @Model.ReferenceNo</p>
+                            @if (Model.BaseAmount.HasValue)
+                            {
+                                <p>BaseAmount: @Model.BaseAmount @Model.BaseCurrencyId</p>
+                            }
+                            <p>CheckAmount: @Model.CheckAmount @Model.PaidCurrencyId (What you should've paid)</p>
+                            <p>PaidAmount: @Model.PaidAmount @Model.PaidCurrencyId (What you actually have paid)</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 alert alert-danger">
+                        <p>No transaction has occurred. it was either canceled or expiration due has passed.</p>
+                        <p>OrderNo: @Model.OrderNo</p>
+                        <p>ReferenceNo: @Model.ReferenceNo</p>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
